@@ -47,7 +47,7 @@ class TransferCreate(BaseModel):
     description: Optional[str] = None
 
 class TransferResponse(BaseModel):
-    transfer_id: str
+    transfer_id: int
     sender_transaction_id: int
     recipient_transaction_id: int
     amount: Decimal
@@ -79,19 +79,19 @@ def create_transfer(transfer: TransferCreate, db: Session = Depends(get_db)):
 
         sender_transaction = Transaction(
             user_id=transfer.sender_user_id,
-            transaction_type="DEBIT",
+            transaction_type="TRANSFER_OUT",
             amount=transfer.amount,
             description=transfer.description,
-            recipient_id=transfer.recipient_user_id,
+            recipient_user_id=transfer.recipient_user_id,
             
         )
 
         recipient_transaction = Transaction(
             user_id=transfer.recipient_user_id,
-            recipient_id=transfer.recipient_user_id,
+            recipient_user_id=transfer.recipient_user_id,
             amount=transfer.amount,
             description=transfer.description,
-            transaction_type="CREDIT",
+            transaction_type="TRANSFER_IN",
             
         )
 
