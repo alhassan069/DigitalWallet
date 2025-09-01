@@ -82,14 +82,12 @@ def create_transfer(transfer: TransferCreate, db: Session = Depends(get_db)):
             transaction_type="DEBIT",
             amount=transfer.amount,
             description=transfer.description,
-            sender_id=transfer.sender_user_id,
             recipient_id=transfer.recipient_user_id,
             
         )
 
         recipient_transaction = Transaction(
             user_id=transfer.recipient_user_id,
-            sender_id=transfer.sender_user_id,
             recipient_id=transfer.recipient_user_id,
             amount=transfer.amount,
             description=transfer.description,
