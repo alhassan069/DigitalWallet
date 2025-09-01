@@ -52,8 +52,8 @@ class Transaction(Base):
     transaction_type: Mapped[str] = mapped_column(String(20), nullable=False)
     amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
     description: Mapped[str] = mapped_column(Text)
-    reference_transaction_id: Mapped[int] = mapped_column(Integer, ForeignKey("transactions.id"))
-    recipient_user_id: Mapped[int] = mapped_column(Integer)
+    reference_transaction_id: Mapped[int] = mapped_column(Integer, ForeignKey("transactions.id"), nullable=True)
+    recipient_user_id: Mapped[int] = mapped_column(Integer, nullable=True)
     created_at: Mapped[DateTime] = mapped_column(DateTime, default=func.now())
 
     user: Mapped["User"] = relationship("User", back_populates="transactions")

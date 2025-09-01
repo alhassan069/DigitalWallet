@@ -32,8 +32,8 @@ class UserCreate(BaseModel):
     phone_number: str
 
 
-@router.post("/")
-def create_user(user_data: UserCreate, db: Session = Depends(get_db), status_code: int = status.HTTP_201_CREATED):
+@router.post("/", status_code=status.HTTP_201_CREATED)
+def create_user(user_data: UserCreate, db: Session = Depends(get_db)):
     user = User(**user_data.dict())
     db.add(user)
     db.commit()
@@ -54,8 +54,8 @@ Response: 200 OK
 }
 '''
 
-@router.get("/{user_id}")
-def get_user_by_id(user_id: int, db: Session = Depends(get_db), status_code: int = status.HTTP_200_OK):
+@router.get("/{user_id}", status_code = status.HTTP_200_OK)
+def get_user_by_id(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         return {"error": "User not found"}
@@ -86,8 +86,8 @@ class UserUpdate(BaseModel):
     phone_number: Optional[str]
 
 
-@router.put("/{user_id}")
-def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends(get_db), status_code: int = status.HTTP_200_OK):
+@router.put("/{user_id}", status_code=status.HTTP_200_OK)
+def update_user(user_id: int, user_data: UserUpdate, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         return {"error": "User not found"}
