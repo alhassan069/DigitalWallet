@@ -24,36 +24,37 @@ CREATE TABLE transactions (
 );
 '''
 
-from sqlalchemy import Column, Integer, String, Numeric, Text, ForeignKey, TIMESTAMP
+from sqlalchemy import Column, Integer, String, Numeric, Text, ForeignKey, TIMESTAMP, DateTime
 from sqlalchemy.orm import relationship
 from db import Base
-
+from sqlalchemy.sql import func
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), unique=True, nullable=False)
-    email = Column(String(100), unique=True, nullable=False)
-    password = Column(String(255), nullable=False)
-    phone_number = Column(String(15))
-    balance = Column(Numeric(10, 2), default=0.00)
-    created_at = Column(TIMESTAMP, server_default="CURRENT_TIMESTAMP")
-    updated_at = Column(TIMESTAMP, server_default="CURRENT_TIMESTAMP", onupdate="CURRENT_TIMESTAMP")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    password: Mapped[str] = mapped_column(String(255), nullable=False)
+    phone_number: Mapped[str] = mapped_column(String(15))
+    balance: Mapped[float] = mapped_column(Numeric(10, 2), default=0.00)
+    created_at: Mapped[DateTime] = mapped_column(DateTime, default=func.now())
+    updated_at: Mapped[DateTime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
 
-    transactions = relationship("Transaction", back_populates="user")
+    transactions: Mapped[list["Transaction"]] = relationship("Transaction", back_populates="user")
 
 class Transaction(Base):
     __tablename__ = "transactions"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    transaction_type = Column(String(20), nullable=False)
-    amount = Column(Numeric(10, 2), nullable=False)
-    description = Column(Text)
-    reference_transaction_id = Column(Integer, ForeignKey("transactions.id"))
-    recipient_user_id = Column(Integer, ForeignKey("users.id"))
-    created_at = Column(TIMESTAMP, server_default="CURRENT_TIMESTAMP")
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
+    transaction_type: Mapped[str] = mapped_column(String(20), nullable=False)
+    amount: Mapped[float] = mapped_column(Numeric(10, 2), nullable=False)
+    description: Mapped[str] = mapped_column(Text)
+    reference_transaction_id: Mapped[int] = mapped_column(Integer, ForeignKey("transactions.id"))
+    recipient_user_id: Mapped[int] = mapped_column(Integer)
+    created_at: Mapped[DateTime] = mapped_column(DateTime, default=func.now())
 
-    user = relationship("User", back_populates="transactions")
-    reference_transaction = relationship("Transaction", remote_side=[id])
-    recipient_user = relationship("User", remote_side=[id])
+    user: Mapped["User"] = relationship("User", back_populates="transactions")
+    reference_transaction: Mapped["Transaction"] = relationship("Transaction", remote_side=[id])

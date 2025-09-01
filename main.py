@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from db import get_db, Base, engine
 from models import User, Transaction
+from routes.users import router as user_router
 
 app = FastAPI()
 
@@ -10,6 +11,7 @@ def hello_world():
 
 
 
+app.include_router(user_router)
 
 @app.on_event('startup')
 def starting_db():
